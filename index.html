@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calculador de Bebida</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<style type="text/css">
+		.active {
+			border: 5px solid green;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper container">
+		<div class="form-row item py-3" data-valor="">
+			<input class="valor-soma" type="hidden">
+			<div class="col-4">
+				<label>Quant.</label>
+				<input class="form-control input-calc quant" type="" name="">
+			</div>
+			<div class="col-4">
+				<label>Valor</label>
+				<input class="form-control input-calc valor" type="" name="">
+			</div>
+			<div class="col-4">
+				<span class="valor-litro"></span>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<button class="btn btn-primary btn-add">Adicionar</button>
+	</div>
+		
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="jquery.mask.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		$(function(){
+
+			var valores = [];
+
+			$('.valor').mask('000.000.000.000.000,00', {reverse: true});
+
+			$('.btn-add').on('click', function(){
+				var item = '<div class="form-row item py-3" data-valor="">'+
+							'<input class="valor-soma" type="hidden">'+
+							'<div class="col-4">'+
+							'<label>Quant.</label>'+
+							'<input class="form-control input-calc quant" type="" name="">'+
+							'</div>'+
+							'<div class="col-4">'+
+							'<label>Valor</label>'+
+							'<input class="form-control input-calc valor" type="" name="">'+
+							'</div>'+
+							'<div class="col-4">'+
+							'<span class="valor-litro"></span>'+
+							'</div>'+
+							'</div>';
+
+				$(item).appendTo('.wrapper');
+				$('.valor').mask('000.000.000.000.000,00', {reverse: true});
+			});
+
+			$(document).on('blur', '.input-calc', function(){
+				var quant = $(this).closest('.item').find('.quant').val();
+				var valor = $(this).closest('.item').find('.valor').val();
+
+				$('.item').removeClass('active');
+
+				if(quant != '' && valor != '') {
+					valor = valor.replace(',', '.')
+					valor = valor * 1000;
+					valor = valor / quant;
+					valor = valor.toFixed(2);
+
+					$(this).closest('.item').attr('data-valor', valor);
+					$(this).closest('.item').find('.valor-soma').val(valor);
+
+					valores = [];
+
+					$('.item').each(function(){
+						var valorItem = $(this).find('.valor-soma').val();
+						valores.push(valorItem);
+					});
+					
+					valorMask = valor.replace('.', ',');
+
+					$(this).closest('.item').find('.valor-litro').text('R$ '+valorMask);
+
+					console.log('Valores: '+valores);
+					console.log(minInArr(valores));
+
+					var menorValor = minInArr(valores);
+
+					$('.item').each(function(){
+						var dataValor = $(this).attr('data-valor');
+
+						if(dataValor == menorValor) {
+							$(this).addClass('active');
+						}
+					});
+
+				}
+			});
+
+
+			minInArr = function(arr) {
+				var smallest = arr[0];
+
+				for(var i=1; i<arr.length; i++){
+					if(parseInt(arr[i],10) < smallest){
+						smallest = arr[i];   
+					}
+				}
+
+				return smallest
+			}
+
+		});
+	</script>
+</body>
+</html>
